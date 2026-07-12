@@ -85,26 +85,26 @@ export const Navbar: React.FC = () => {
             <span>LinkedOut</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            <Link to="/jobs" className={navLinkClass('/jobs')}>
-              Jobs
-            </Link>
-            {isAuthenticated && (
+          {isAuthenticated && (
+            <nav className="hidden md:flex items-center gap-1">
+              <Link to="/jobs" className={navLinkClass('/jobs')}>
+                Jobs
+              </Link>
               <Link to={dashboardPath} className={navLinkClass(dashboardPath)}>
                 Dashboard
               </Link>
-            )}
-            {user?.role !== 'Employer' && (
-              <Link to="/companies" className={navLinkClass('/companies')}>
-                Companies
-              </Link>
-            )}
-            {user?.role === 'Employer' && (
-              <Link to="/employer/company" className={navLinkClass('/employer/company')}>
-                My Company
-              </Link>
-            )}
-          </nav>
+              {user?.role !== 'Employer' && (
+                <Link to="/companies" className={navLinkClass('/companies')}>
+                  Companies
+                </Link>
+              )}
+              {user?.role === 'Employer' && (
+                <Link to="/employer/company" className={navLinkClass('/employer/company')}>
+                  My Company
+                </Link>
+              )}
+            </nav>
+          )}
         </div>
 
         {/* Right: Actions */}
@@ -275,30 +275,31 @@ export const Navbar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border-default bg-white px-4 py-3">
           <div className="flex flex-col gap-1">
-            <Link to="/jobs" className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle" onClick={() => setMobileMenuOpen(false)}>
-              Jobs
-            </Link>
-            {isAuthenticated && (
-              <Link
-                to={dashboardPath}
-                className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-            )}
-            {user?.role !== 'Employer' && (
-              <Link to="/companies" className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle" onClick={() => setMobileMenuOpen(false)}>
-                Companies
-              </Link>
-            )}
-            {user?.role === 'Employer' && (
-              <Link to="/employer/company" className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle" onClick={() => setMobileMenuOpen(false)}>
-                My Company
-              </Link>
-            )}
-            {!isAuthenticated && (
-              <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-border-default">
+            {isAuthenticated ? (
+              <>
+                <Link to="/jobs" className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle" onClick={() => setMobileMenuOpen(false)}>
+                  Jobs
+                </Link>
+                <Link
+                  to={dashboardPath}
+                  className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                {user?.role !== 'Employer' && (
+                  <Link to="/companies" className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle" onClick={() => setMobileMenuOpen(false)}>
+                    Companies
+                  </Link>
+                )}
+                {user?.role === 'Employer' && (
+                  <Link to="/employer/company" className="px-3 py-2 rounded-md text-sm font-medium text-fg-default hover:bg-canvas-subtle" onClick={() => setMobileMenuOpen(false)}>
+                    My Company
+                  </Link>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-col gap-2 mt-2 pt-2">
                 <Link to="/login" className="w-full text-center btn-secondary" onClick={() => setMobileMenuOpen(false)}>Sign in</Link>
                 <Link to="/register" className="w-full text-center btn-primary" onClick={() => setMobileMenuOpen(false)}>Sign up</Link>
               </div>

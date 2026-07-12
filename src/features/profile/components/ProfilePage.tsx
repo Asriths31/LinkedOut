@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../../store/authStore';
 import { useProfileStore } from '../../../store/profileStore';
-import { User as UserIcon, Mail, Save, Loader2, FileText, Settings, Award, Eye, Download, X, Trash2 } from 'lucide-react';
+import { User as UserIcon, Mail, Save, Loader2, FileText, Settings, Award, Eye, Download, X, Trash2, HelpCircle } from 'lucide-react';
 import { api } from '../../../utils/api';
 import toast from 'react-hot-toast';
 
@@ -20,6 +20,7 @@ export const ProfilePage: React.FC = () => {
   // Candidate Extra Fields
   const [skills, setSkills] = useState(profileStore.skills);
   const [coverLetter, setCoverLetter] = useState(profileStore.coverLetter);
+  const [faqAnswers, setFaqAnswers] = useState<Record<string, string>>(profileStore.faqAnswers || {});
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +34,7 @@ export const ProfilePage: React.FC = () => {
           skills,
           coverLetter,
         });
+        profileStore.updateFaqAnswers(faqAnswers);
       }
       
       toast.success('Profile details updated successfully');
@@ -376,6 +378,34 @@ export const ProfilePage: React.FC = () => {
                       rows={5}
                       className="w-full text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
                     />
+                  </div>
+
+                  <div className="pt-4 mt-4 border-t border-border-default space-y-4">
+                    <div>
+                      <h3 className="text-sm font-semibold text-fg-default mb-1 flex items-center gap-1.5">
+                        <HelpCircle size={16} className="text-fg-subtle" />
+                        Global Screening Question Bank (FAQs)
+                      </h3>
+                      <p className="text-xs text-fg-muted mb-3">Pre-fill answers to common employer screening questions to speed up your applications.</p>
+                    </div>
+                    
+                    {[
+                      "What is your expected salary?",
+                      "What is your notice period?",
+                      "Will you now or in the future require sponsorship for employment visa status?",
+                      "How many years of relevant experience do you have?"
+                    ].map(question => (
+                      <div key={question}>
+                        <label className="block text-xs font-semibold text-fg-default mb-1.5">{question}</label>
+                        <input
+                          type="text"
+                          value={faqAnswers[question] || ''}
+                          onChange={(e) => setFaqAnswers({ ...faqAnswers, [question]: e.target.value })}
+                          placeholder="Your answer..."
+                          className="w-full text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

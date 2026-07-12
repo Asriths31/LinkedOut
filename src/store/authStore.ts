@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useProfileStore } from './profileStore';
 
 export type UserRole = 'Guest' | 'Candidate' | 'Employer' | 'Admin';
 
@@ -10,6 +11,7 @@ export interface User {
   role: UserRole;
   isVerified: boolean;
   profilePhoto?: string;
+  candidateProfile?: any;
 }
 
 interface AuthState {
@@ -32,10 +34,15 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       setAuth: (user, accessToken) => {
         const normalized = { ...user, id: user.id || (user as any)._id || '' };
+        if (normalized.candidateProfile) {
+          useProfileStore.getState().initialize(normalized.candidateProfile);
+        }
         set({ user: normalized, accessToken, isAuthenticated: true, isLoading: false });
       },
-      clearAuth: () =>
-        set({ user: null, accessToken: null, isAuthenticated: false, isLoading: false }),
+      clearAuth: () => {
+        useProfileStore.getState().clearProfile();
+        set({ user: null, accessToken: null, isAuthenticated: false, isLoading: false });
+      },
       updateAccessToken: (accessToken) => set({ accessToken }),
       setLoading: (loading) => set({ isLoading: loading }),
     }),

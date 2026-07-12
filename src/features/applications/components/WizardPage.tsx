@@ -37,6 +37,20 @@ export const WizardPage: React.FC = () => {
   const [resumePath, setResumePath] = useState(profileStore.resumePath || 'jane_doe_resume_senior_dev.pdf'); // default mock resume
   const [coverLetter, setCoverLetter] = useState(profileStore.coverLetter || '');
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  
+  React.useEffect(() => {
+    if (job && job.customQuestions) {
+      const initialAnswers: Record<string, string> = {};
+      job.customQuestions.forEach((q: any) => {
+        // Find if this question label exists in profileStore.faqAnswers
+        if (profileStore.faqAnswers && profileStore.faqAnswers[q.label]) {
+          initialAnswers[q.fieldId] = profileStore.faqAnswers[q.label];
+        }
+      });
+      // Merge with existing answers in case of re-render
+      setAnswers((prev) => ({ ...initialAnswers, ...prev }));
+    }
+  }, [job, profileStore.faqAnswers]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -169,6 +183,15 @@ export const WizardPage: React.FC = () => {
         coverLetter,
         answers: mappedAnswers,
       });
+
+      // Update global FAQ answers in profile
+      const newFaqAnswers: Record<string, string> = {};
+      mappedAnswers.forEach((ans) => {
+        if (ans.value.trim()) {
+          newFaqAnswers[ans.label] = ans.value;
+        }
+      });
+      profileStore.updateFaqAnswers(newFaqAnswers);
 
       // Clear from Apply Later cart if it was queued
       removeItem(job._id);

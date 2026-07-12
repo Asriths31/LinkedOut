@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { api } from '../utils/api';
 
 export interface ResumeItem {
   id: string;
@@ -11,62 +11,126 @@ export interface ResumeItem {
 interface ProfileState {
   resumes: ResumeItem[];
   selectedResumeId: string;
-  resumePath: string; // Keep this synced for backwards compatibility (holds URL or filename)
+  resumePath: string; // Keep this synced for backwards compatibility
   skills: string;
   coverLetter: string;
+  faqAnswers: Record<string, string>;
+  
+  initialize: (data: any) => void;
+  clearProfile: () => void;
   setProfileData: (data: { skills: string; coverLetter: string }) => void;
   addResume: (name: string, url?: string) => void;
   selectResume: (id: string) => void;
   deleteResume: (id: string) => void;
+  setFaqAnswer: (question: string, answer: string) => void;
+  updateFaqAnswers: (answers: Record<string, string>) => void;
 }
 
-export const useProfileStore = create<ProfileState>()(
-  persist(
-    (set) => ({
-      resumes: [
-        { id: '1', name: 'jane_doe_resume_senior_dev.pdf', url: '', uploadedAt: new Date().toLocaleDateString() }
-      ],
-      selectedResumeId: '1',
-      resumePath: 'jane_doe_resume_senior_dev.pdf',
-      skills: 'React, Node.js, Express, MongoDB, TypeScript, TailwindCSS',
-      coverLetter: 'I am a highly motivated Senior Software Engineer experienced in full stack development. I build clean, maintainable systems and love working on agile teams.',
-      setProfileData: (data) => set(data),
-      addResume: (name, url) => set((state) => {
-        const newItem = {
-          id: `resume_${Date.now()}`,
-          name,
-          url: url || '',
-          uploadedAt: new Date().toLocaleDateString()
-        };
-        return {
-          resumes: [...state.resumes, newItem],
-          selectedResumeId: newItem.id,
-          resumePath: newItem.url || newItem.name, // sync compatibility path to url if available
-        };
-      }),
-      selectResume: (id) => set((state) => {
-        const found = state.resumes.find((r) => r.id === id);
-        return {
-          selectedResumeId: id,
-          resumePath: found ? (found.url || found.name) : state.resumePath,
-        };
-      }),
-      deleteResume: (id) => set((state) => {
-        const remaining = state.resumes.filter((r) => r.id !== id);
-        let nextSelectedId = state.selectedResumeId;
-        if (state.selectedResumeId === id) {
-          nextSelectedId = remaining[0]?.id || '';
-        }
-        const found = remaining.find((r) => r.id === nextSelectedId);
-        return {
-          resumes: remaining,
-          selectedResumeId: nextSelectedId,
-          resumePath: found ? (found.url || found.name) : '',
-        };
-      }),
-    }),
-    {
-      name: 'linkedout-profile-details',
-    }
-  )
-);
+const syncWithBackend = async (state: ProfileState) => {
+  try {
+    await api.put('/users/profile', {
+      resumes: state.resumes,
+      selectedResumeId: state.selectedResumeId,
+      skills: state.skills,
+      coverLetter: state.coverLetter,
+      faqAnswers: state.faqAnswers,
+    });
+  } catch (error) {
+    console.error('Failed to sync profile with backend', error);
+  }
+};
+
+export const useProfileStore = create<ProfileState>((set, get) => ({
+  resumes: [],
+  selectedResumeId: '',
+  resumePath: '',
+  skills: '',
+  coverLetter: '',
+  faqAnswers: {},
+
+  initialize: (data) => set({
+    resumes: data?.resumes || [],
+    selectedResumeId: data?.selectedResumeId || '',
+    resumePath: data?.resumes?.find((r: any) => r.id === data?.selectedResumeId)?.url || '',
+    skills: data?.skills || '',
+    coverLetter: data?.coverLetter || '',
+    faqAnswers: data?.faqAnswers || {},
+  }),
+
+  clearProfile: () => set({
+    resumes: [],
+    selectedResumeId: '',
+    resumePath: '',
+    skills: '',
+    coverLetter: '',
+    faqAnswers: {},
+  }),
+
+  setProfileData: (data) => {
+    set(data);
+    syncWithBackend(get());
+  },
+
+  addResume: (name, url) => {
+    const newItem = {
+      id: `resume_${Date.now()}`,
+      name,
+      url: url || '',
+      uploadedAt: new Date().toLocaleDateString()
+    };
+    set((state) => ({
+      resumes: [...state.resumes, newItem],
+      selectedResumeId: newItem.id,
+      resumePath: newItem.url || newItem.name,
+    }));
+    syncWithBackend(get());
+  },
+
+  selectResume: (id) => {
+    set((state) => {
+      const found = state.resumes.find((r) => r.id === id);
+      return {
+        selectedResumeId: id,
+        resumePath: found ? (found.url || found.name) : state.resumePath,
+      };
+    });
+    syncWithBackend(get());
+  },
+
+  deleteResume: (id) => {
+    set((state) => {
+      const remaining = state.resumes.filter((r) => r.id !== id);
+      let nextSelectedId = state.selectedResumeId;
+      if (state.selectedResumeId === id) {
+        nextSelectedId = remaining[0]?.id || '';
+      }
+      const found = remaining.find((r) => r.id === nextSelectedId);
+      return {
+        resumes: remaining,
+        selectedResumeId: nextSelectedId,
+        resumePath: found ? (found.url || found.name) : '',
+      };
+    });
+    syncWithBackend(get());
+  },
+
+  setFaqAnswer: (question, answer) => {
+    set((state) => ({
+      faqAnswers: {
+        ...state.faqAnswers,
+        [question]: answer,
+      }
+    }));
+    syncWithBackend(get());
+  },
+
+  updateFaqAnswers: (answers) => {
+    set((state) => ({
+      faqAnswers: {
+        ...state.faqAnswers,
+        ...answers,
+      }
+    }));
+    syncWithBackend(get());
+  },
+}));

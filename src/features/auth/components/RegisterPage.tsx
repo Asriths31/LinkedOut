@@ -8,7 +8,7 @@ import { useNotificationStore } from '../../../store/notificationStore';
 import { api } from '../../../utils/api';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User as UserIcon, ShieldAlert, ArrowLeft, UserPlus, Briefcase, GraduationCap } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ShieldAlert, ArrowLeft, UserPlus, Briefcase, GraduationCap, Eye, EyeOff } from 'lucide-react';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must not exceed 50 characters'),
@@ -18,7 +18,11 @@ const registerSchema = z.object({
     .min(6, 'Password must be at least 6 characters')
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
+  confirmPassword: z.string().min(1, 'Confirm password is required'),
   role: z.enum(['Candidate', 'Employer']),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -29,6 +33,8 @@ export const RegisterPage: React.FC = () => {
   const { addNotification } = useNotificationStore();
 
   const [selectedRole, setSelectedRole] = useState<'Candidate' | 'Employer'>('Candidate');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -43,7 +49,12 @@ export const RegisterPage: React.FC = () => {
   const onSubmit = async (data: RegisterFormValues) => {
     setLoading(true);
     try {
-      const response = await api.post('/auth/signup', data);
+      const response = await api.post('/auth/signup', {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+      });
       toast.success(response.data.message || 'Registration successful! Please check your email to verify your account.');
       addNotification(`Account created successfully for ${data.name}. Verification pending.`, 'success');
       navigate('/login');
@@ -164,18 +175,58 @@ export const RegisterPage: React.FC = () => {
                 <Lock size={16} />
               </span>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 {...register('password')}
-                className={`input-field pl-10 ${
+                className={`input-field pl-10 pr-10 ${
                   errors.password ? 'border-danger focus:ring-danger/20 focus:border-danger' : ''
                 }`}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-fg-subtle hover:text-fg-default transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
             {errors.password && (
               <span className="flex items-center gap-1 mt-1 text-xs text-danger">
                 <ShieldAlert size={12} />
                 {errors.password.message}
+              </span>
+            )}
+          </div>
+
+          {/* Confirm Password field */}
+          <div>
+            <label className="block text-xs font-semibold text-fg-default mb-1.5">
+              Confirm Password <span className="text-danger">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-fg-subtle">
+                <Lock size={16} />
+              </span>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                {...register('confirmPassword')}
+                className={`input-field pl-10 pr-10 ${
+                  errors.confirmPassword ? 'border-danger focus:ring-danger/20 focus:border-danger' : ''
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-fg-subtle hover:text-fg-default transition-colors"
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <span className="flex items-center gap-1 mt-1 text-xs text-danger">
+                <ShieldAlert size={12} />
+                {errors.confirmPassword.message}
               </span>
             )}
           </div>

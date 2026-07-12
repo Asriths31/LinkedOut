@@ -36,6 +36,7 @@ export const JobCreatePage: React.FC = () => {
   const [maxSalary, setMaxSalary] = useState('120000');
   const [rawRequirements, setRawRequirements] = useState('');
   const [rawBenefits, setRawBenefits] = useState('');
+  const [applicationDeadline, setApplicationDeadline] = useState('');
 
   // Questionnaire Form Builder State
   const [customQuestions, setCustomQuestions] = useState<CustomQuestionInput[]>([]);
@@ -97,6 +98,7 @@ export const JobCreatePage: React.FC = () => {
         benefits,
         customQuestions,
         status: 'Active',
+        ...(applicationDeadline && { applicationDeadline: new Date(applicationDeadline).toISOString() }),
       };
 
       await api.post('/jobs', jobData);
@@ -228,6 +230,19 @@ export const JobCreatePage: React.FC = () => {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-fg-default mb-1.5">
+                Application Deadline (Optional)
+              </label>
+              <input
+                type="date"
+                value={applicationDeadline}
+                onChange={(e) => setApplicationDeadline(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full md:w-1/2 text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
           </div>
         </div>
 
@@ -296,6 +311,35 @@ export const JobCreatePage: React.FC = () => {
               <Plus size={14} />
               Add Question
             </button>
+          </div>
+
+          <div className="px-4 py-3 bg-[#fafafa] border-b border-border-default space-y-2">
+            <p className="text-xs font-semibold text-fg-default">Suggested FAQs:</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                "What is your expected salary?",
+                "What is your notice period?",
+                "Will you now or in the future require sponsorship for employment visa status?",
+                "How many years of relevant experience do you have?"
+              ].map((faq) => (
+                <button
+                  key={faq}
+                  type="button"
+                  onClick={() => {
+                    const fieldId = `question_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+                    setCustomQuestions((prev) => [...prev, {
+                      fieldId,
+                      label: faq,
+                      type: 'text',
+                      required: true,
+                    }]);
+                  }}
+                  className="text-[10px] bg-white border border-border-default px-2.5 py-1 rounded-full text-fg-muted hover:text-primary hover:border-primary transition-colors text-left"
+                >
+                  + {faq}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="p-4">
