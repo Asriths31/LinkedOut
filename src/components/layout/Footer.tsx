@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -10,7 +9,11 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 font-semibold text-fg-default text-base mb-3">
-              <Briefcase size={18} />
+              <img 
+                src="/LinkedOut_Logo.png" 
+                alt="LinkedOut Logo" 
+                className="h-6 w-auto object-contain"
+              />
               <span>LinkedOut</span>
             </Link>
             <p className="text-sm text-fg-muted leading-relaxed max-w-xs">
