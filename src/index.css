@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* GitHub-inspired monochrome palette */
+  --color-primary: #1F6FEB;
+  --color-primary-dark: #1158C7;
+  --color-primary-light: #DBEAFE;
+
+  --color-secondary: #8B5CF6;
+  --color-secondary-dark: #7C3AED;
+  --color-secondary-light: #EDE9FE;
+
+  --color-accent: #F59E0B;
+  --color-accent-dark: #D97706;
+  --color-accent-light: #FEF3C7;
+
+  --color-success: #1A7F37;
+  --color-success-dark: #116329;
+  --color-success-light: #DAFBE1;
+
+  --color-danger: #CF222E;
+  --color-danger-dark: #A40E26;
+  --color-danger-light: #FFEBE9;
+
+  --color-customBg: #ffffff;
+  --color-canvas-subtle: #f6f8fa;
+  --color-border-default: #d1d9e0;
+  --color-border-muted: #d8dee4;
+  --color-fg-default: #1f2328;
+  --color-fg-muted: #656d76;
+  --color-fg-subtle: #6e7781;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+
+  --shadow-sm: 0 1px 0 rgba(31,35,40,0.04);
+  --shadow-md: 0 3px 6px rgba(140,149,159,0.15);
+  --shadow-lg: 0 8px 24px rgba(140,149,159,0.2);
+  --shadow-premium: 0 1px 3px rgba(31,35,40,0.04), 0 1px 0 rgba(31,35,40,0.04);
+  --shadow-glass: 0 1px 3px rgba(31,35,40,0.04);
+}
+
+/* ── Utility Classes ── */
+
+@utility glass-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+@utility premium-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  &:hover {
+    border-color: #bbc0c5;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 5px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(31,35,40,0.15);
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.15s ease;
+  &:hover {
+    background-color: var(--color-primary-dark);
+  }
+  &:active {
+    background-color: #0d4ea6;
+  }
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+@utility btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  background-color: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-fg-default);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 5px 16px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  &:hover {
+    background-color: #eaeef2;
+    border-color: #afb8c1;
+  }
+  &:active {
+    background-color: #d0d7de;
+  }
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+@utility input-field {
+  width: 100%;
+  padding: 5px 12px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-fg-default);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(31,111,235,0.3);
+    outline: none;
+  }
+  &::placeholder {
+    color: var(--color-fg-subtle);
+  }
+}
+
+/* ── Base Styles ── */
+
+body {
+  background-color: #ffffff;
+  color: var(--color-fg-default);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-fg-default);
+}
+
+/* ── Tooltip ── */
+
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: #24292f;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 99999;
+}
+
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #24292f;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 99999;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:hover::before {
+  opacity: 1;
+}
+
+/* Ensure tooltip parents don't clip tooltips */
+[data-tooltip]:hover {
+  overflow: visible !important;
+}
+
+/* ── Custom Scrollbar ── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d9e0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #afb8c1;
+}
+
+/* ── Status label utilities ── */
+
+@utility label-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+  border: 1px solid transparent;
+}
+
+@utility label-closed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
+  border: 1px solid transparent;
+}
+
+/* ── Global Aesthetic Overrides to Force GitHub Style ── */
+.rounded-xl,
+.rounded-2xl {
+  border-radius: 6px !important;
+}
+
+.border-slate-50,
+.border-slate-100,
+.border-slate-200,
+.border-slate-300,
+.border-white\/50,
+.border-white\/40,
+.border-white\/10 {
+  border-color: var(--color-border-default) !important;
+}
+
+.bg-customBg,
+.bg-slate-50\/20,
+.bg-slate-50\/30,
+.bg-slate-50 {
+  background-color: var(--color-canvas-subtle) !important;
+}
+
+.text-slate-900,
+.text-slate-950 {
+  color: var(--color-fg-default) !important;
+}
+
+.text-slate-400,
+.text-slate-500,
+.text-slate-600 {
+  color: var(--color-fg-muted) !important;
+}
+
+.bg-primary-light {
+  background-color: var(--color-primary-light) !important;
+  color: var(--color-primary) !important;
+}
+
+.font-display {
+  font-family: var(--font-sans) !important;
+}
