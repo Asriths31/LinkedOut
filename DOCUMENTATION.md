@@ -4,6 +4,20 @@ This document outlines the core features, workflows, and technical mechanics of 
 
 ---
 
+## Demo Accounts
+
+To quickly explore the platform without registering, you can use the following demo accounts:
+
+**Candidate (Job Seeker)**
+- **Email**: candidate@hirewave.dev
+- **Password**: Demo123!
+
+**Employer (Company)**
+- **Email**: employer@hirewave.dev
+- **Password**: Demo123!
+
+---
+
 ## 1. Authentication & Roles
 
 The platform supports two distinct user roles: **Candidate** (Job Seeker) and **Employer**.
