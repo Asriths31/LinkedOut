@@ -4,7 +4,6 @@ import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
 import { useNotificationStore } from '../../store/notificationStore';
 import {
-  Briefcase,
   ShoppingBag,
   Bell,
   Menu,
