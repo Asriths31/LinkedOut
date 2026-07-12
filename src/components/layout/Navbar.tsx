@@ -81,8 +81,11 @@ export const Navbar: React.FC = () => {
         {/* Left: Logo + Nav Links */}
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2 text-fg-default font-semibold text-base">
-            <Briefcase size={20} className="text-fg-default" />
-            <span>LinkedOut</span>
+            <img 
+              src="/LinkedOut_Logo.png" 
+              alt="LinkedOut Logo" 
+              className="h-8 w-auto object-contain"
+            />
           </Link>
 
           {isAuthenticated && (
