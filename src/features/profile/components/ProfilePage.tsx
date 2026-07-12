@@ -20,6 +20,7 @@ export const ProfilePage: React.FC = () => {
   // Candidate Extra Fields
   const [skills, setSkills] = useState(profileStore.skills);
   const [coverLetter, setCoverLetter] = useState(profileStore.coverLetter);
+  const [isFresher, setIsFresher] = useState(profileStore.isFresher);
   const [faqAnswers, setFaqAnswers] = useState<Record<string, string>>(profileStore.faqAnswers || {});
 
   const handleSave = (e: React.FormEvent) => {
@@ -33,6 +34,7 @@ export const ProfilePage: React.FC = () => {
         profileStore.setProfileData({
           skills,
           coverLetter,
+          isFresher,
         });
         profileStore.updateFaqAnswers(faqAnswers);
       }
@@ -133,8 +135,6 @@ export const ProfilePage: React.FC = () => {
             {resumeUrl && (
               <a
                 href={resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="btn-primary !py-1.5 !px-4 text-xs font-semibold flex items-center gap-1"
               >
                 <Download size={12} />
@@ -365,6 +365,18 @@ export const ProfilePage: React.FC = () => {
                         className="w-full text-sm bg-white border border-border-default rounded-md pl-10 pr-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 cursor-pointer mt-2 text-xs font-semibold text-fg-default">
+                      <input
+                        type="checkbox"
+                        checked={isFresher}
+                        onChange={(e) => setIsFresher(e.target.checked)}
+                        className="accent-primary w-4 h-4 rounded border-border-default text-primary focus:ring-primary/20"
+                      />
+                      I am a Fresher / Entry Level Candidate
+                    </label>
                   </div>
 
                   <div>

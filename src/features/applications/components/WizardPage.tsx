@@ -445,7 +445,9 @@ export const WizardPage: React.FC = () => {
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between py-2 border-b border-border-default">
                   <span className="font-medium text-fg-muted">Resume File</span>
-                  <span className="font-semibold text-fg-default">{resumePath}</span>
+                  <a href={resumePath} className="font-semibold text-primary hover:underline">
+                    {profileStore.resumes.find((r) => r.url === resumePath)?.name || resumePath}
+                  </a>
                 </div>
 
                 {customQuestions.length > 0 && (

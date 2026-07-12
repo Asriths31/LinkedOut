@@ -13,7 +13,6 @@ import { Mail, Lock, LogIn, ArrowRight, ShieldAlert } from 'lucide-react';
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
-  rememberMe: z.boolean().optional(),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -29,7 +28,6 @@ export const LoginPage: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { rememberMe: false },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -133,19 +131,6 @@ export const LoginPage: React.FC = () => {
                 {errors.password.message}
               </span>
             )}
-          </div>
-
-          {/* Remember me */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="rememberMe"
-              {...register('rememberMe')}
-              className="h-4 w-4 rounded border-border-default text-primary focus:ring-primary/20"
-            />
-            <label htmlFor="rememberMe" className="ml-2 text-xs text-fg-muted font-medium">
-              Keep me logged in
-            </label>
           </div>
 
           {/* Submit */}

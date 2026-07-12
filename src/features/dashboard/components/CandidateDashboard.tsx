@@ -143,7 +143,6 @@ export const CandidateDashboard: React.FC = () => {
                     <div>
                       <Link
                         to={`/jobs/${app.job?._id}`}
-                        target="_blank"
                         rel="noopener noreferrer"
                         className="font-semibold text-sm text-fg-default hover:text-primary flex items-center gap-1.5"
                       >

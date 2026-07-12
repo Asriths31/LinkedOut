@@ -4,6 +4,7 @@ import { useJobDetails, useJobs } from '../hooks/useJobs';
 import { useSavedJobsStore } from '../../../store/savedJobsStore';
 import { useCartStore } from '../../../store/cartStore';
 import { useAuthStore } from '../../../store/authStore';
+import { useProfileStore } from '../../../store/profileStore';
 import {
   MapPin,
   Calendar,
@@ -37,6 +38,7 @@ export const JobDetails: React.FC = () => {
   // Stores
   const { toggleSaveJob, isSaved } = useSavedJobsStore();
   const { addItem, items: cartItems } = useCartStore();
+  const profileStore = useProfileStore();
 
   // FAQ Accordion State
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(null);
@@ -229,7 +231,14 @@ export const JobDetails: React.FC = () => {
           {!isEmployer && (
             <div className="border border-border-default rounded-md bg-white p-6 space-y-4">
               <button
-                onClick={() => navigate(`/apply/${job._id}`)}
+                onClick={() => {
+                  if (profileStore.resumes.length === 0) {
+                    toast.error('Please upload a resume in your profile before applying.');
+                    navigate('/profile');
+                  } else {
+                    navigate(`/apply/${job._id}`);
+                  }
+                }}
                 className="w-full btn-primary flex items-center justify-center gap-2 py-2.5"
               >
                 <span>Apply Now</span>
@@ -301,9 +310,8 @@ export const JobDetails: React.FC = () => {
             {job.company?.website && (
               <a
                 href={job.company.website}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs text-primary font-semibold hover:underline"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-primary hover:underline truncate"
               >
                 Visit website
               </a>

@@ -239,6 +239,7 @@ export const JobCreatePage: React.FC = () => {
                 type="date"
                 value={applicationDeadline}
                 onChange={(e) => setApplicationDeadline(e.target.value)}
+                onClick={(e) => (e.target as any).showPicker && (e.target as any).showPicker()}
                 min={new Date().toISOString().split('T')[0]}
                 className="w-full md:w-1/2 text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />

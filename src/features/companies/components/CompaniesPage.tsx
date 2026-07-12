@@ -84,7 +84,6 @@ export const CompaniesPage: React.FC = () => {
                   {company.website && (
                     <a
                       href={company.website}
-                      target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 hover:text-primary transition-colors"
                       data-tooltip="Visit website"

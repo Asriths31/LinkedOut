@@ -195,7 +195,6 @@ export const EmployerDashboard: React.FC = () => {
                     <h3 className="text-sm font-semibold text-fg-default">{job.title}</h3>
                     <Link
                       to={`/jobs/${job._id}`}
-                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:text-primary-dark"
                       onClick={(e) => e.stopPropagation()}

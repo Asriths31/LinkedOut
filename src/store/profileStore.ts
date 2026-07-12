@@ -14,11 +14,12 @@ interface ProfileState {
   resumePath: string; // Keep this synced for backwards compatibility
   skills: string;
   coverLetter: string;
+  isFresher: boolean;
   faqAnswers: Record<string, string>;
   
   initialize: (data: any) => void;
   clearProfile: () => void;
-  setProfileData: (data: { skills: string; coverLetter: string }) => void;
+  setProfileData: (data: { skills: string; coverLetter: string; isFresher: boolean }) => void;
   addResume: (name: string, url?: string) => void;
   selectResume: (id: string) => void;
   deleteResume: (id: string) => void;
@@ -33,6 +34,7 @@ const syncWithBackend = async (state: ProfileState) => {
       selectedResumeId: state.selectedResumeId,
       skills: state.skills,
       coverLetter: state.coverLetter,
+      isFresher: state.isFresher,
       faqAnswers: state.faqAnswers,
     });
   } catch (error) {
@@ -46,6 +48,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   resumePath: '',
   skills: '',
   coverLetter: '',
+  isFresher: false,
   faqAnswers: {},
 
   initialize: (data) => set({
@@ -54,6 +57,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     resumePath: data?.resumes?.find((r: any) => r.id === data?.selectedResumeId)?.url || '',
     skills: data?.skills || '',
     coverLetter: data?.coverLetter || '',
+    isFresher: data?.isFresher || false,
     faqAnswers: data?.faqAnswers || {},
   }),
 
@@ -63,6 +67,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     resumePath: '',
     skills: '',
     coverLetter: '',
+    isFresher: false,
     faqAnswers: {},
   }),
 

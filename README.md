@@ -1,32 +1,17 @@
-# React + TypeScript + Vite
+# LinkedOut Job Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Welcome to the LinkedOut Job Portal repository. 
 
-Currently, two official plugins are available:
+For a complete overview of features, workflows, and technical mechanics, please see the [DOCUMENTATION.md](./DOCUMENTATION.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Demo Accounts
 
-## React Compiler
+To quickly explore the platform without registering, you can use the following demo accounts:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Candidate (Job Seeker)**
+- **Email**: candidate@hirewave.dev
+- **Password**: Demo123!
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+**Employer (Company)**
+- **Email**: employer@hirewave.dev
+- **Password**: Demo123!

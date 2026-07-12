@@ -321,8 +321,6 @@ export const JobsPage: React.FC = () => {
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         to={`/jobs/${job._id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="text-base font-semibold text-primary hover:underline"
                       >
                         {job.title}
