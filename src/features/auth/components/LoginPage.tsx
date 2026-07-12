@@ -116,7 +116,12 @@ const [showPassword, setShowPassword] = useState<boolean>(false);
                 Forgot?
               </Link>
             </div>
-            <div className="relative">
+           <div className="relative">
+  {/* Lock Icon */}
+  <Lock
+    className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+  />
+
   <input
     type={showPassword ? "text" : "password"}
     placeholder="••••••••"
@@ -128,10 +133,11 @@ const [showPassword, setShowPassword] = useState<boolean>(false);
     }`}
   />
 
+  {/* Eye Toggle */}
   <button
     type="button"
-    onClick={() => setShowPassword((prev: boolean) => !prev)}
-    className="absolute inset-y-0 right-3 flex items-center justify-center text-gray-500 hover:text-gray-700"
+    onClick={() => setShowPassword((prev) => !prev)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
     aria-label={showPassword ? "Hide password" : "Show password"}
   >
     {showPassword ? (
