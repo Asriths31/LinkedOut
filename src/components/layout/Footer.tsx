@@ -9,12 +9,13 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 font-semibold text-fg-default text-base mb-3">
+            <span className='-mr-2 font-bold'>Linked</span>
               <img 
                 src="/LinkedOut_Logo.png" 
                 alt="LinkedOut Logo" 
                 className="h-6 w-auto object-contain"
               />
-              <span>LinkedOut</span>
+              
             </Link>
             <p className="text-sm text-fg-muted leading-relaxed max-w-xs">
               A modern talent platform connecting developers with companies building the future.

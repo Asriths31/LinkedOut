@@ -80,6 +80,7 @@ export const Navbar: React.FC = () => {
         {/* Left: Logo + Nav Links */}
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2 text-fg-default font-semibold text-base">
+            <span className='-mr-2 font-bold'>Linked</span>
             <img 
               src="/LinkedOut_Logo.png" 
               alt="LinkedOut Logo" 
