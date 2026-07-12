@@ -9,6 +9,8 @@ import { api } from '../../../utils/api';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Mail, Lock, LogIn, ArrowRight, ShieldAlert } from 'lucide-react';
+import { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -29,6 +31,8 @@ export const LoginPage: React.FC = () => {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+
+const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
@@ -116,14 +120,31 @@ export const LoginPage: React.FC = () => {
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-fg-subtle">
                 <Lock size={16} />
               </span>
-              <input
-                type="password"
-                placeholder="••••••••"
-                {...register('password')}
-                className={`input-field pl-10 ${
-                  errors.password ? 'border-danger focus:ring-danger/20 focus:border-danger' : ''
-                }`}
-              />
+              <div className="relative">
+  <input
+    type={showPassword ? 'text' : 'password'}
+    placeholder="••••••••"
+    {...register('password')}
+    className={`input-field pl-10 pr-10 ${
+      errors.password
+        ? 'border-danger focus:ring-danger/20 focus:border-danger'
+        : ''
+    }`}
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowPassword((prev) => !prev)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-400 hover:text-gray-600"
+    aria-label={showPassword ? 'Hide password' : 'Show password'}
+  >
+    {showPassword ? (
+      <FaEyeSlash className="h-5 w-5" />
+    ) : (
+      <FaEye className="h-5 w-5" />
+    )}
+  </button>
+</div>
             </div>
             {errors.password && (
               <span className="flex items-center gap-1 mt-1 text-xs text-danger">
