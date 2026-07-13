@@ -8,6 +8,16 @@ export interface ResumeItem {
   uploadedAt: string;
 }
 
+export interface ExperienceItem {
+  id: string;
+  company: string;
+  role: string;
+  startDate: string;
+  endDate: string;
+  currentlyWorking: boolean;
+  description: string;
+}
+
 interface ProfileState {
   resumes: ResumeItem[];
   selectedResumeId: string;
@@ -16,15 +26,19 @@ interface ProfileState {
   coverLetter: string;
   isFresher: boolean;
   faqAnswers: Record<string, string>;
+  experiences: ExperienceItem[];
   
   initialize: (data: any) => void;
   clearProfile: () => void;
-  setProfileData: (data: { skills: string; coverLetter: string; isFresher: boolean }) => void;
+  setProfileData: (data: { skills: string; coverLetter: string; isFresher: boolean; experiences: ExperienceItem[] }) => void;
   addResume: (name: string, url?: string) => void;
   selectResume: (id: string) => void;
   deleteResume: (id: string) => void;
   setFaqAnswer: (question: string, answer: string) => void;
   updateFaqAnswers: (answers: Record<string, string>) => void;
+  addExperience: (exp: Omit<ExperienceItem, 'id'>) => void;
+  updateExperience: (id: string, exp: Partial<ExperienceItem>) => void;
+  deleteExperience: (id: string) => void;
 }
 
 const syncWithBackend = async (state: ProfileState) => {
@@ -36,6 +50,7 @@ const syncWithBackend = async (state: ProfileState) => {
       coverLetter: state.coverLetter,
       isFresher: state.isFresher,
       faqAnswers: state.faqAnswers,
+      experiences: state.experiences,
     });
   } catch (error) {
     console.error('Failed to sync profile with backend', error);
@@ -50,6 +65,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   coverLetter: '',
   isFresher: false,
   faqAnswers: {},
+  experiences: [],
 
   initialize: (data) => set({
     resumes: data?.resumes || [],
@@ -59,6 +75,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     coverLetter: data?.coverLetter || '',
     isFresher: data?.isFresher || false,
     faqAnswers: data?.faqAnswers || {},
+    experiences: data?.experiences || [],
   }),
 
   clearProfile: () => set({
@@ -69,6 +86,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     coverLetter: '',
     isFresher: false,
     faqAnswers: {},
+    experiences: [],
   }),
 
   setProfileData: (data) => {
@@ -135,6 +153,33 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         ...state.faqAnswers,
         ...answers,
       }
+    }));
+    syncWithBackend(get());
+  },
+
+  addExperience: (exp) => {
+    const newExp: ExperienceItem = {
+      ...exp,
+      id: `exp_${Date.now()}`,
+    };
+    set((state) => ({
+      experiences: [...state.experiences, newExp],
+    }));
+    syncWithBackend(get());
+  },
+
+  updateExperience: (id, expUpdate) => {
+    set((state) => ({
+      experiences: state.experiences.map((e) =>
+        e.id === id ? { ...e, ...expUpdate } : e
+      ),
+    }));
+    syncWithBackend(get());
+  },
+
+  deleteExperience: (id) => {
+    set((state) => ({
+      experiences: state.experiences.filter((e) => e.id !== id),
     }));
     syncWithBackend(get());
   },

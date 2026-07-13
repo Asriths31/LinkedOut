@@ -322,24 +322,37 @@ export const JobCreatePage: React.FC = () => {
                 "What is your notice period?",
                 "Will you now or in the future require sponsorship for employment visa status?",
                 "How many years of relevant experience do you have?"
-              ].map((faq) => (
-                <button
-                  key={faq}
-                  type="button"
-                  onClick={() => {
-                    const fieldId = `question_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-                    setCustomQuestions((prev) => [...prev, {
-                      fieldId,
-                      label: faq,
-                      type: 'text',
-                      required: true,
-                    }]);
-                  }}
-                  className="text-[10px] bg-white border border-border-default px-2.5 py-1 rounded-full text-fg-muted hover:text-primary hover:border-primary transition-colors text-left"
-                >
-                  + {faq}
-                </button>
-              ))}
+              ].map((faq) => {
+                const isSelected = customQuestions.some((q) => q.label === faq);
+                return (
+                  <button
+                    key={faq}
+                    type="button"
+                    onClick={() => {
+                      if (isSelected) {
+                        // Remove the FAQ question
+                        setCustomQuestions((prev) => prev.filter((q) => q.label !== faq));
+                      } else {
+                        // Add the FAQ question
+                        const fieldId = `question_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+                        setCustomQuestions((prev) => [...prev, {
+                          fieldId,
+                          label: faq,
+                          type: 'text',
+                          required: true,
+                        }]);
+                      }
+                    }}
+                    className={`text-[10px] px-2.5 py-1 rounded-full transition-all duration-150 text-left ${
+                      isSelected
+                        ? 'bg-primary/10 border border-primary text-primary font-semibold shadow-sm'
+                        : 'bg-white border border-border-default text-fg-muted hover:text-primary hover:border-primary'
+                    }`}
+                  >
+                    {isSelected ? '✓' : '+'} {faq}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

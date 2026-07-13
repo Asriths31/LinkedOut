@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../../store/authStore';
-import { useProfileStore } from '../../../store/profileStore';
-import { User as UserIcon, Mail, Save, Loader2, FileText, Settings, Award, Eye, Download, X, Trash2, HelpCircle } from 'lucide-react';
+import { useProfileStore, type ExperienceItem } from '../../../store/profileStore';
+import { User as UserIcon, Mail, Save, Loader2, FileText, Settings, Award, Eye, Download, X, Trash2, HelpCircle, Briefcase, Plus, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
 import { api } from '../../../utils/api';
 import toast from 'react-hot-toast';
 
@@ -22,6 +22,10 @@ export const ProfilePage: React.FC = () => {
   const [coverLetter, setCoverLetter] = useState(profileStore.coverLetter);
   const [isFresher, setIsFresher] = useState(profileStore.isFresher);
   const [faqAnswers, setFaqAnswers] = useState<Record<string, string>>(profileStore.faqAnswers || {});
+  const [experiences, setExperiences] = useState<ExperienceItem[]>(profileStore.experiences || []);
+  const [showExpForm, setShowExpForm] = useState(false);
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [expForm, setExpForm] = useState({ company: '', role: '', startDate: '', endDate: '', currentlyWorking: false, description: '' });
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +39,7 @@ export const ProfilePage: React.FC = () => {
           skills,
           coverLetter,
           isFresher,
+          experiences: isFresher ? [] : experiences,
         });
         profileStore.updateFaqAnswers(faqAnswers);
       }
@@ -372,12 +377,233 @@ export const ProfilePage: React.FC = () => {
                       <input
                         type="checkbox"
                         checked={isFresher}
-                        onChange={(e) => setIsFresher(e.target.checked)}
+                        onChange={(e) => {
+                          setIsFresher(e.target.checked);
+                          if (e.target.checked) {
+                            setShowExpForm(false);
+                            setEditingExpId(null);
+                          }
+                        }}
                         className="accent-primary w-4 h-4 rounded border-border-default text-primary focus:ring-primary/20"
                       />
                       I am a Fresher / Entry Level Candidate
                     </label>
                   </div>
+
+                  {/* Experience Details - only visible when NOT fresher */}
+                  {!isFresher && (
+                    <div className="pt-4 mt-4 border-t border-border-default space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-fg-default flex items-center gap-1.5">
+                          <Briefcase size={16} className="text-fg-subtle" />
+                          Work Experience
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowExpForm(true);
+                            setEditingExpId(null);
+                            setExpForm({ company: '', role: '', startDate: '', endDate: '', currentlyWorking: false, description: '' });
+                          }}
+                          className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors px-2.5 py-1 rounded-md border border-primary/25 hover:bg-primary-light/40"
+                        >
+                          <Plus size={14} />
+                          Add Experience
+                        </button>
+                      </div>
+
+                      {/* Experience List */}
+                      {experiences.length > 0 && (
+                        <div className="space-y-3">
+                          {experiences.map((exp) => (
+                            <div
+                              key={exp.id}
+                              className="border border-border-default rounded-md bg-white overflow-hidden transition-all hover:shadow-sm"
+                            >
+                              <div className="flex items-start justify-between p-3">
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="text-sm font-semibold text-fg-default">{exp.role}</h4>
+                                  <p className="text-xs text-fg-muted mt-0.5 flex items-center gap-1">
+                                    <Briefcase size={11} className="text-fg-subtle" />
+                                    {exp.company}
+                                  </p>
+                                  <p className="text-[10px] text-fg-subtle mt-1 flex items-center gap-1">
+                                    <Calendar size={10} />
+                                    {exp.startDate} — {exp.currentlyWorking ? 'Present' : exp.endDate}
+                                  </p>
+                                  {exp.description && (
+                                    <p className="text-xs text-fg-muted mt-2 leading-relaxed">{exp.description}</p>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1.5 ml-3 flex-shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingExpId(exp.id);
+                                      setShowExpForm(true);
+                                      setExpForm({
+                                        company: exp.company,
+                                        role: exp.role,
+                                        startDate: exp.startDate,
+                                        endDate: exp.endDate,
+                                        currentlyWorking: exp.currentlyWorking,
+                                        description: exp.description,
+                                      });
+                                    }}
+                                    className="p-1 rounded-md border border-border-default text-fg-subtle hover:text-primary hover:bg-canvas-subtle transition-colors"
+                                    title="Edit Experience"
+                                  >
+                                    <Settings size={12} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setExperiences((prev) => prev.filter((e) => e.id !== exp.id));
+                                      toast.success('Experience removed');
+                                    }}
+                                    className="p-1 rounded-md border border-border-default text-fg-subtle hover:text-danger hover:bg-canvas-subtle transition-colors"
+                                    title="Delete Experience"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {experiences.length === 0 && !showExpForm && (
+                        <div className="text-center py-6 border border-dashed border-border-default rounded-md bg-canvas-subtle">
+                          <Briefcase size={24} className="mx-auto text-fg-subtle mb-2" />
+                          <p className="text-xs text-fg-muted">No experience added yet.</p>
+                          <p className="text-[10px] text-fg-subtle mt-0.5">Click "Add Experience" to get started.</p>
+                        </div>
+                      )}
+
+                      {/* Add/Edit Experience Form */}
+                      {showExpForm && (
+                        <div className="border border-primary/25 rounded-md bg-primary-light/10 p-4 space-y-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="text-xs font-semibold text-fg-default">
+                              {editingExpId ? 'Edit Experience' : 'Add New Experience'}
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={() => { setShowExpForm(false); setEditingExpId(null); }}
+                              className="text-fg-subtle hover:text-fg-default p-0.5 hover:bg-[#eaeef2] rounded-md transition-colors"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[11px] font-semibold text-fg-default mb-1">Company <span className="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                value={expForm.company}
+                                onChange={(e) => setExpForm({ ...expForm, company: e.target.value })}
+                                placeholder="e.g. Google"
+                                className="w-full text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-semibold text-fg-default mb-1">Job Title / Role <span className="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                value={expForm.role}
+                                onChange={(e) => setExpForm({ ...expForm, role: e.target.value })}
+                                placeholder="e.g. Software Engineer"
+                                className="w-full text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[11px] font-semibold text-fg-default mb-1">Start Date <span className="text-danger">*</span></label>
+                              <input
+                                type="month"
+                                value={expForm.startDate}
+                                onChange={(e) => setExpForm({ ...expForm, startDate: e.target.value })}
+                                className="w-full text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-semibold text-fg-default mb-1">End Date</label>
+                              <input
+                                type="month"
+                                value={expForm.endDate}
+                                onChange={(e) => setExpForm({ ...expForm, endDate: e.target.value })}
+                                disabled={expForm.currentlyWorking}
+                                className={`w-full text-sm border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${expForm.currentlyWorking ? 'bg-canvas-subtle text-fg-subtle cursor-not-allowed' : 'bg-white'}`}
+                              />
+                            </div>
+                          </div>
+
+                          <label className="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-fg-default">
+                            <input
+                              type="checkbox"
+                              checked={expForm.currentlyWorking}
+                              onChange={(e) => setExpForm({ ...expForm, currentlyWorking: e.target.checked, endDate: e.target.checked ? '' : expForm.endDate })}
+                              className="accent-primary w-3.5 h-3.5 rounded"
+                            />
+                            I currently work here
+                          </label>
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-fg-default mb-1">Description</label>
+                            <textarea
+                              value={expForm.description}
+                              onChange={(e) => setExpForm({ ...expForm, description: e.target.value })}
+                              placeholder="Describe your key responsibilities and achievements..."
+                              rows={3}
+                              className="w-full text-sm bg-white border border-border-default rounded-md px-3 py-1.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+                            />
+                          </div>
+
+                          <div className="flex justify-end gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => { setShowExpForm(false); setEditingExpId(null); }}
+                              className="btn-secondary !py-1.5 !px-3 text-xs font-semibold"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!expForm.company.trim() || !expForm.role.trim() || !expForm.startDate) {
+                                  toast.error('Please fill in Company, Role, and Start Date');
+                                  return;
+                                }
+                                if (editingExpId) {
+                                  setExperiences((prev) =>
+                                    prev.map((e) => e.id === editingExpId ? { ...e, ...expForm } : e)
+                                  );
+                                  toast.success('Experience updated');
+                                } else {
+                                  const newExp: ExperienceItem = {
+                                    ...expForm,
+                                    id: `exp_${Date.now()}`,
+                                  };
+                                  setExperiences((prev) => [...prev, newExp]);
+                                  toast.success('Experience added');
+                                }
+                                setShowExpForm(false);
+                                setEditingExpId(null);
+                                setExpForm({ company: '', role: '', startDate: '', endDate: '', currentlyWorking: false, description: '' });
+                              }}
+                              className="btn-primary !py-1.5 !px-3 text-xs font-semibold"
+                            >
+                              {editingExpId ? 'Update' : 'Add'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-xs font-semibold text-fg-default mb-1.5">
