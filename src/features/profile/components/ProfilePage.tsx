@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../../store/authStore';
 import { useProfileStore, type ExperienceItem } from '../../../store/profileStore';
-import { User as UserIcon, Mail, Save, Loader2, FileText, Settings, Award, Eye, Download, X, Trash2, HelpCircle, Briefcase, Plus, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
+import { User as UserIcon, Mail, Save, Loader2, FileText, Settings, Award, Eye, Download, X, Trash2, HelpCircle, Briefcase, Plus, Calendar } from 'lucide-react';
 import { api } from '../../../utils/api';
 import toast from 'react-hot-toast';
 
